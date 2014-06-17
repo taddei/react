@@ -87,6 +87,7 @@ var ReactPropTypes = {
   oneOf: createEnumTypeChecker,
   oneOfType: createUnionTypeChecker,
   renderable: createRenderableTypeChecker(),
+  email: createEmailTypeChecker(),
   shape: createShapeTypeChecker
 };
 
@@ -280,6 +281,20 @@ function createShapeTypeChecker(shapeTypes) {
     }
   }
   return createChainableTypeChecker(validate, 'expected `object`');
+}
+
+function createEmailTypeChecker() {
+    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    function validate(props, propName, componentName, location) {
+        if (!re.test(props[propName])) {
+            var locationName = ReactPropTypeLocationNames[location];
+            return new Error(
+        `Invalid ${locationName} \`${propName}\` supplied to ` +
+        `\`${componentName}\`, expected valid email.`
+        );
+        }
+    }
+    return createChainableTypeChecker(validate);
 }
 
 function isRenderable(propValue) {
